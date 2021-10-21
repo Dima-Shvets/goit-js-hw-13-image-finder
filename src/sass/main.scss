@@ -2,3 +2,20 @@
  * Главный файл стилей.
  * Все паршалы подключаются сюда.
  */
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.photo-card {
+  display: flex;
+  flex-direction: column;
+  align-content: space-between;
+  width: 640px;
+  height: 100%;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+}
