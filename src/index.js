@@ -1,6 +1,7 @@
 import './sass/main.scss';
 
 import debounce from "lodash.debounce";
+import * as basicLightbox from 'basiclightbox'
 
 import galleryTpl from './templates/gallery-tpl.hbs';
 import photoCardTpl from './templates/photo-card-tpl.hbs';
@@ -22,6 +23,7 @@ const picturesApiService = new PicturesApiService;
 
 refs.searchForm.addEventListener('input', debounce(onFormInputChange, 500));
 refs.loadMoreBtn.addEventListener('click', onLoadBtnPress);
+refs.gallery.addEventListener('click', onPicturesClick)
 
 
 function onFormInputChange(e) {
@@ -49,12 +51,26 @@ function clearGallery() {
 }
 
 function appendCardsMarkup(pictures) {
-    refs.gallery.insertAdjacentHTML('beforeend', photoCardTpl(pictures))
+    refs.gallery.insertAdjacentHTML('beforeend', photoCardTpl(pictures));
+    refs.gallery.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+    });
 }
 
 function onLoadBtnPress() {
     fetchPicures();
 }
+
+function onPicturesClick(e) {
+    const url = e.target.dataset.large;
+    basicLightbox.create(`
+		<img width="1400" height="900" src=${url}>
+	`).show()
+
+}
+
+
 
 
 

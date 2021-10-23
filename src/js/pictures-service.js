@@ -14,7 +14,8 @@ export default class PicturesApiService {
             .then(pictures => {
                 this.incrementPage();
                 return pictures;
-            });
+            })
+            .catch(err => console.log(err));
     }
 
     incrementPage() {
