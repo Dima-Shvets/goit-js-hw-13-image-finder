@@ -3,6 +3,11 @@ import './sass/main.scss';
 import debounce from "lodash.debounce";
 import * as basicLightbox from 'basiclightbox';
 
+import { error } from '@pnotify/core'
+import { defaults } from '@pnotify/core'
+import "@pnotify/core/dist/PNotify.css";
+import "@pnotify/core/dist/BrightTheme.css";
+
 import galleryTpl from './templates/gallery-tpl.hbs';
 import photoCardTpl from './templates/photo-card-tpl.hbs';
 import searchFormTpl from './templates/search-form-tpl.hbs';
@@ -50,7 +55,14 @@ async function fetchPicures() {
 
     const promise = picturesApiService.fetchPictures();
 
-    await promise.then(pictures => appendCardsMarkup(pictures.hits));
+    await promise.then(pictures => {
+// console.log(pictures)
+        if (pictures.total === 0) {
+            onError()
+            return
+        }
+        appendCardsMarkup(pictures.hits)
+    });
 }
 
 function clearGallery() {
@@ -91,6 +103,17 @@ function intersationObserverCallback(entries) {
 
 function addIntersectionObserver(elem) {
     observer.observe(elem)
+}
+
+function showNotification(message) {
+    error({
+        text: `${message}`,
+    });
+};
+
+function onError() {
+    const message = 'Enter a different query!';
+            showNotification(message);
 }
 
 
