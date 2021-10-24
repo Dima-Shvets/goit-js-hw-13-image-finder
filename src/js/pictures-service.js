@@ -7,15 +7,29 @@ export default class PicturesApiService {
         this.page = 1; 
     }
 
-    fetchPictures() {
+    // fetchPictures() {
+    //     const url = `${BASE_URL}/?image_type=photo&orientation=horizontal&q=${this.searchQuery}&page=${this.page}&per_page=12&key=${ACCESS_KEY}`;
+    //     return fetch(url)
+    //         .then(responce => responce.json())
+    //         .then(pictures => {
+    //             this.incrementPage();
+    //             return pictures;
+    //         })
+    //         .catch(err => console.log(err));
+    // }
+
+    async fetchPictures() {
         const url = `${BASE_URL}/?image_type=photo&orientation=horizontal&q=${this.searchQuery}&page=${this.page}&per_page=12&key=${ACCESS_KEY}`;
-        return fetch(url)
-            .then(responce => responce.json())
-            .then(pictures => {
-                this.incrementPage();
-                return pictures;
-            })
-            .catch(err => console.log(err));
+        try {
+        const pictures = await fetch(url).then(responce => { 
+            this.incrementPage();
+            return responce.json();
+        }
+          );
+        return pictures;
+        } catch (err) {
+            alert(err);
+        }
     }
 
     incrementPage() {
@@ -36,3 +50,4 @@ export default class PicturesApiService {
 
 
 }
+

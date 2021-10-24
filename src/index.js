@@ -1,7 +1,7 @@
 import './sass/main.scss';
 
 import debounce from "lodash.debounce";
-import * as basicLightbox from 'basiclightbox'
+import * as basicLightbox from 'basiclightbox';
 
 import galleryTpl from './templates/gallery-tpl.hbs';
 import photoCardTpl from './templates/photo-card-tpl.hbs';
@@ -21,8 +21,15 @@ const refs = {
 
 const picturesApiService = new PicturesApiService;
 
+const intersationObserverOptions = {
+    rootMargin: '0px', 
+    threshold: 0,
+}
+
+const observer = new IntersectionObserver(intersationObserverCallback, intersationObserverOptions)
+
 refs.searchForm.addEventListener('input', debounce(onFormInputChange, 500));
-refs.loadMoreBtn.addEventListener('click', onLoadBtnPress);
+// refs.loadMoreBtn.addEventListener('click', onLoadBtnPress);
 refs.gallery.addEventListener('click', onPicturesClick)
 
 
@@ -39,11 +46,11 @@ function onFormInputChange(e) {
     fetchPicures();
 }
 
-function fetchPicures() {
-    picturesApiService.fetchPictures().then(pictures => {
-        appendCardsMarkup(pictures.hits);
-    }
-    );
+async function fetchPicures() {
+
+    const promise = picturesApiService.fetchPictures();
+
+    await promise.then(pictures => appendCardsMarkup(pictures.hits));
 }
 
 function clearGallery() {
@@ -52,13 +59,15 @@ function clearGallery() {
 
 function appendCardsMarkup(pictures) {
     refs.gallery.insertAdjacentHTML('beforeend', photoCardTpl(pictures));
-    refs.gallery.scrollIntoView({
-        behavior: 'smooth',
-        block: 'end',
-    });
+    // refs.gallery.scrollIntoView({
+    //     behavior: 'smooth',
+    //     block: 'end',
+    // });
+
+    addIntersectionObserver(refs.gallery.lastElementChild);
 }
 
-function onLoadBtnPress() {
+function onIntersection() {
     fetchPicures();
 }
 
@@ -68,6 +77,20 @@ function onPicturesClick(e) {
 		<img width="1400" height="900" src=${url}>
 	`).show()
 
+}
+
+
+function intersationObserverCallback(entries) {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            setTimeout(onIntersection(), 1000);
+        }
+    }
+    )
+}
+
+function addIntersectionObserver(elem) {
+    observer.observe(elem)
 }
 
 
